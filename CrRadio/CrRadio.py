@@ -142,7 +142,7 @@ class CrRadio:
         if not len(package) == 31:
             self.state = CrRadioState.Error
             raise WrongPackageSize(f"Package array must be of lenght 31, {len(package)} recieved")
-        if not all(0<=)  
+        # if not all(0<=)                           #! TODO Content check required
         package.append(self._hash(package))
         self.radio.write(package)
 
