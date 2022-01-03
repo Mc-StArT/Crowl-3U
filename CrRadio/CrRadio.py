@@ -3,7 +3,7 @@ import time
 import spidev
 from lib_nrf24 import NRF24
 from RadioEnvironment import *
-
+from time import sleep
 GPIO.setmode(GPIO.BCM)
 
 
@@ -43,17 +43,29 @@ class CrRadio:
         # self.radio.printDetails()
     
 
+    def getAck(self, *, desired = None):
+        _sentTime = time.time()
+        
+        pass
 
-    def sendFile(self, filePath: str, ) -> int:
+    def _sendCommand(self, command:int) -> CrRadioEventResult:
+                                                                        
+        buf = [0]*32                                                    #! TODO: Write
+        buf[0] = command
+        self.radio.write(buf)
+        response = self.getAck()
+        pass  
+
+    def sendFile(self, filePath: str, ) -> CrRadioEventResult:          #! TODO: Rewrite
         self.state = CrRadioState.ImageSending
 
         if filePath.split(".")[-1]!="b64":
-            raise TypeError
+            raise TypeError(f"Wrong file type: .b64 expected, {filePath.split('.')[-1]} got")
         with open(filePath, "r") as file:
             data = file.read()
-            file.close()
+            # file.close()
         packedData = self._splitStringToPieces(data)
-        print(f"Bytes to be transmitted: {len(data)}\nPackages to be transmitted: {len(packedData)}\nEstimated time: {self._estimateTime(len(packedData))}")
+        print(f"Bytes to be transmitted: {len(data)}\nPackages to be transmitted: {len(packedData)}\nEstimated time: {self._estimateTime(packedData)}")
         
         self.radio.write(list("start"))
         for index in range(len(packedData)):
@@ -75,7 +87,7 @@ class CrRadio:
     
     
     
-    def recieveFile(self, fileName:str) -> int:
+    def recieveFile(self, fileName:str) -> int: #! TODO Rewrite
         if fileName.split(".")[-1]!="b64":
             raise TypeError("Unappropriate file format: expected .b64")
         with open(fileName, "w") as file:
@@ -85,9 +97,6 @@ class CrRadio:
             i=1
             while not self.radio.available():
                 self._print("Listening for file...")
-                
-
-            
             while not string[:5]=="start":
                 while not self.radio.available([0]):
                     time.sleep(10000/1000000.0)
@@ -114,15 +123,16 @@ class CrRadio:
         hsh = sum(toBeHashed)%255
         return hsh
 
-    def _splitStringToPieces(self, line:str) -> str:
-        chunks, chunk_size = len(line), (len(line)//31) + 1 if len(line)%31!=0 else (len(line)//31)
-        return [line[i:min(i+chunk_size, len(line))] for i in range(0, chunks, chunk_size)]
+    def _splitStringToPieces(self, string:str,*,  n=29) -> str:
+        chunks = [string[i:i+n] for i in range(0, len(string), n)]
+        chunks[-1] = chunks[-1]+"="*(n-len(chunks[-1]))
+        return chunks, len(chunks)
 
-    def _estimateTime(self, amount:int) -> int:
+    def _estimateTime(self, dt:list) -> int:
         
-        _time = amount/1000
-        self._print(_time)
-        return _time                #!!! Placeholder, requires replacement
+        _time = len(dt)/1000
+        self._print(f"Estimated time: {_time}")
+        return _time                #!!! TODO: Placeholder, requires replacement
     
     """def hasData(self) -> bool:      #*? Not needed
         data = []
@@ -133,7 +143,7 @@ class CrRadio:
             return False
     """
         
-    def _sendPackage(self, package) -> CrRadioSendResult:
+    def _sendPackage(self, package) -> CrRadioEventResult:
         
         if not isinstance(package, (list)):
             self.state = CrRadioState.Error
@@ -151,6 +161,6 @@ class CrRadio:
             print(message)
         return
         
-    def _parsePackage(self, package:list):
+    def _parsePackage(self, package:list):          #! TODO: Finish parsing function
         self._print("Parsing package: "+"["+" ,".join(package))
         command = package[0]

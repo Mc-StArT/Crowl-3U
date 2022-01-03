@@ -13,10 +13,14 @@ class CrRadioEventResult(enum.Enum):
     Ok = 0
     GenericError = 1
 
+class CrRadioMessageType(enum.Enum):
+    Command = 1
+    ImagePiece = 3
 
-class CrRadioSendResult(CrRadioEventResult):
-    a = 2
 
+class CrRadioCommand(enum.Enum):
+    StartImage = 3
+    FinishImage = 5
 
 class WrongPackageSize(Exception):
     pass

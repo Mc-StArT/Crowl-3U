@@ -6,11 +6,16 @@ def splt(n, string):
     chunks[-1] = chunks[-1]+"="*(n-len(chunks[-1]))
 
     print(chunks[-1])
+    print(len(chunks))
     open("imgaft.png", "wb").write(base64.decodebytes(("".join(chunks)).encode()))
 with open("./test.b64", "r") as f:
     
-    splt(31, "".join([i[:-1] for i in f.readlines()]))
+    splt(29, "".join([i[:-1] for i in f.readlines()]))
+print(2**16)
 
+a = None
+if not a:
+    print(123123)
 
 
 
