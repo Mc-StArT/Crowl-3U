@@ -12,7 +12,7 @@ class CrRadioState(enum.Enum):
 class CrRadioEventResult(enum.Enum):
     Ok = 0
     GenericError = 1
-
+    TimeoutError = 2
 class CrRadioMessageType(enum.Enum):
     Command = 1
     ImagePiece = 3
