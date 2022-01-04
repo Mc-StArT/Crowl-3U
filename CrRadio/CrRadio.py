@@ -43,20 +43,30 @@ class CrRadio:
         # self.radio.printDetails()
     
 
-    def getAck(self, *, desired = None):
+    def getAck(self, *, desired = None):                                #! TODO: #1 Finish getAck function @TeaCupMe  
         _sentTime = time.time()
-        
-        pass
+        buf = []
+        while time.time()-_sentTime < 1 and not self.radio.available():
+            pass
+        if not self.radio.available():
+            return CrRadioEventResult.TimeoutError
+        self.radio.read(buf)
+        if len(desired)!=len(buf):
+            return CrRadioEventResult.GenericError
+        elif desired and any(buf[i] != desired[i] for i in range(len(desired))):
+            return CrRadioEventResult.GenericError
+        else:
+            return CrRadioEventResult.Ok
 
     def _sendCommand(self, command:int) -> CrRadioEventResult:
                                                                         
-        buf = [0]*32                                                    #! TODO: Write
+        buf = [0]*32                                                    #! TODO: #2 Write _sendCommand function @TeaCupMe
         buf[0] = command
         self.radio.write(buf)
         response = self.getAck()
         pass  
 
-    def sendFile(self, filePath: str, ) -> CrRadioEventResult:          #! TODO: Rewrite
+    def sendFile(self, filePath: str, ) -> CrRadioEventResult:          #! TODO: #3 Rewrite sendFile function as open API. @TeaCupMe
         self.state = CrRadioState.ImageSending
 
         if filePath.split(".")[-1]!="b64":
