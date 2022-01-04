@@ -1,3 +1,4 @@
+from typing import Tuple
 import RPi.GPIO as GPIO 
 import time     
 import spidev
@@ -6,13 +7,13 @@ from RadioEnvironment import *
 from time import sleep
 GPIO.setmode(GPIO.BCM)
 
-
+#! Rewrite all(nearly all) error returns into raise errors. Assignee: @TeaCupMe 
 class CrRadio:
 
     PKG_OK = 12
     PKG_WRONG_SUM = 17
     PKG_ERROR = 13
-
+    
 
     pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]
     def __init__(self,*, placement = 1, debug = False) -> None:
@@ -43,6 +44,16 @@ class CrRadio:
         # self.radio.printDetails()
     
 
+    def _readRadio(self, buff: list, *, buff_len: int = 32) -> CrRadioEventResult: 
+        if not self.radio.available():
+            return CrRadioEventResult.NoInfoError
+        try:
+            self.radio.read(buf = buff, buf_len=buff_len)
+        except:
+            return CrRadioEventResult.GenericError
+        return CrRadioEventResult.Ok
+
+
     def getAck(self, *, desired = None):                                #! TODO: #1 Finish getAck function @TeaCupMe  
         _sentTime = time.time()
         buf = []
@@ -50,20 +61,30 @@ class CrRadio:
             pass
         if not self.radio.available():
             return CrRadioEventResult.TimeoutError
-        self.radio.read(buf)
+
+        self.radio.read(buf, 32)
+
         if len(desired)!=len(buf):
             return CrRadioEventResult.GenericError
         elif desired and any(buf[i] != desired[i] for i in range(len(desired))):
             return CrRadioEventResult.GenericError
         else:
             return CrRadioEventResult.Ok
-
-    def _sendCommand(self, command:int) -> CrRadioEventResult:
-                                                                        
+    def _splitPieceIndex(self, index:int) -> Tuple(int, int):
+        if index >= 65536:
+            raise ValueError(f"Image piece index should not be bigger than 65535, {index} recieved")
+        high = index >> 8
+        low = index%256
+        return (high, low)
+        
+    def _sendCommand(self, command:CrRadioCommand) -> CrRadioEventResult:
+        if not isinstance(command, CrRadioCommand):
+            return CrRadioEventResult.TypeError
         buf = [0]*32                                                    #! TODO: #2 Write _sendCommand function @TeaCupMe
         buf[0] = command
         self.radio.write(buf)
         response = self.getAck()
+        return response
         pass  
 
     def sendFile(self, filePath: str, ) -> CrRadioEventResult:          #! TODO: #3 Rewrite sendFile function as open API. @TeaCupMe
@@ -76,10 +97,12 @@ class CrRadio:
             # file.close()
         packedData = self._splitStringToPieces(data)
         print(f"Bytes to be transmitted: {len(data)}\nPackages to be transmitted: {len(packedData)}\nEstimated time: {self._estimateTime(packedData)}")
-        
-        self.radio.write(list("start"))
+        if not (bool(self._sendCommand(CrRadioCommand.StartImage))):
+            return CrRadioEventResult.GenericError
+        # self.radio.write(list("start"))
         for index in range(len(packedData)):
             _toSend = []
+            high = bytes(index) >> 8
             # _toSend.append(index//65536)
             # _toSend.append((index%65536)//256)
             # _toSend.append(index%256)
@@ -143,15 +166,6 @@ class CrRadio:
         _time = len(dt)/1000
         self._print(f"Estimated time: {_time}")
         return _time                #!!! TODO: Placeholder, requires replacement
-    
-    """def hasData(self) -> bool:      #*? Not needed
-        data = []
-        self.radio.read(data, 32)
-        if len(data) != 32:
-            return False
-        if data.count(0)+data.count("0")>=30:
-            return False
-    """
         
     def _sendPackage(self, package) -> CrRadioEventResult:
         

@@ -1,21 +1,32 @@
-import base64
-def splt(n, string):
-    print(string)
-    open("imgbef.png", "wb").write(base64.decodebytes(string.encode()))
-    chunks = [string[i:i+n] for i in range(0, len(string), n)]
-    chunks[-1] = chunks[-1]+"="*(n-len(chunks[-1]))
+from RadioEnvironment import *
 
-    print(chunks[-1])
-    print(len(chunks))
-    open("imgaft.png", "wb").write(base64.decodebytes(("".join(chunks)).encode()))
-with open("./test.b64", "r") as f:
+
+print(bool(CrRadioEventResult.TypeError))
+
+
+for index in range(670):
+    _toSend = []
+    high = index >> 8
+    low = index%256
+    print(high, low)
+# import base64
+# def splt(n, string):
+#     print(string)
+#     open("imgbef.png", "wb").write(base64.decodebytes(string.encode()))
+#     chunks = [string[i:i+n] for i in range(0, len(string), n)]
+#     chunks[-1] = chunks[-1]+"="*(n-len(chunks[-1]))
+
+#     print(chunks[-1])
+#     print(len(chunks))
+#     open("imgaft.png", "wb").write(base64.decodebytes(("".join(chunks)).encode()))
+# with open("./test.b64", "r") as f:
     
-    splt(29, "".join([i[:-1] for i in f.readlines()]))
-print(2**16)
+#     splt(29, "".join([i[:-1] for i in f.readlines()]))
+# print(2**16)
 
-a = None
-if not a:
-    print(123123)
+# a = None
+# if not a:
+#     print(123123)
 
 
 

@@ -12,10 +12,20 @@ class CrRadioState(enum.Enum):
 class CrRadioEventResult(enum.Enum):
     Ok = 0
     GenericError = 1
-    TimeoutError = 2
+    TimeoutError = 3
+    NoInfoError = 13
+    TypeError = 21
+
+
+    def __bool__(self):
+        if self.value == CrRadioEventResult.Ok.value:
+            return True
+        else:
+            return False
 class CrRadioMessageType(enum.Enum):
     Command = 1
     ImagePiece = 3
+    Ack = 9
 
 
 class CrRadioCommand(enum.Enum):
