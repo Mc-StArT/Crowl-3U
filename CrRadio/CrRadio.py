@@ -7,7 +7,7 @@ from RadioEnvironment import *
 from time import sleep
 GPIO.setmode(GPIO.BCM)
 
-#! Rewrite all(nearly all) error returns into raise errors. Assignee: @TeaCupMe 
+#! TODO: #4 Rewrite all(nearly all) error returns into raise errors. Assignee: @TeaCupMe 
 class CrRadio:
 
     PKG_OK = 12
@@ -54,14 +54,14 @@ class CrRadio:
         return CrRadioEventResult.Ok
 
 
-    def getAck(self, *, desired = None):                                #! TODO: #1 Finish getAck function @TeaCupMe  
+    def getAck(self, *args, desired = None):                                # TODO: #1 Finish getAck function @TeaCupMe  
         _sentTime = time.time()
         buf = []
         while time.time()-_sentTime < 1 and not self.radio.available():
             pass
         if not self.radio.available():
             return CrRadioEventResult.TimeoutError
-
+        
         self.radio.read(buf, 32)
 
         if len(desired)!=len(buf):
@@ -80,14 +80,14 @@ class CrRadio:
     def _sendCommand(self, command:CrRadioCommand) -> CrRadioEventResult:
         if not isinstance(command, CrRadioCommand):
             return CrRadioEventResult.TypeError
-        buf = [0]*32                                                    #! TODO: #2 Write _sendCommand function @TeaCupMe
+        buf = [0]*32                                                    # TODO: #2 Write _sendCommand function @TeaCupMe
         buf[0] = command
         self.radio.write(buf)
         response = self.getAck()
         return response
         pass  
 
-    def sendFile(self, filePath: str, ) -> CrRadioEventResult:          #! TODO: #3 Rewrite sendFile function as open API. @TeaCupMe
+    def sendFile(self, filePath: str, ) -> CrRadioEventResult:          # TODO: #3 Rewrite sendFile function as open API. @TeaCupMe
         self.state = CrRadioState.ImageSending
 
         if filePath.split(".")[-1]!="b64":
@@ -120,7 +120,7 @@ class CrRadio:
     
     
     
-    def recieveFile(self, fileName:str) -> int: #! TODO Rewrite
+    def recieveFile(self, fileName:str) -> int:             #! TODO #5 Rewrite recieveFile() method for open api
         if fileName.split(".")[-1]!="b64":
             raise TypeError("Unappropriate file format: expected .b64")
         with open(fileName, "w") as file:
@@ -165,7 +165,7 @@ class CrRadio:
         
         _time = len(dt)/1000
         self._print(f"Estimated time: {_time}")
-        return _time                #!!! TODO: Placeholder, requires replacement
+        return _time                #!!! TODO: #7 Replace placeholder of _estimateTime() method
         
     def _sendPackage(self, package) -> CrRadioEventResult:
         
@@ -176,7 +176,7 @@ class CrRadio:
         if not len(package) == 31:
             self.state = CrRadioState.Error
             raise WrongPackageSize(f"Package array must be of lenght 31, {len(package)} recieved")
-        # if not all(0<=)                           #! TODO Content check required
+        # if not all(0<=)                           #! TODO #8 Add content check for buffer elements before sending
         package.append(self._hash(package))
         self.radio.write(package)
 
@@ -185,6 +185,6 @@ class CrRadio:
             print(message)
         return
         
-    def _parsePackage(self, package:list):          #! TODO: Finish parsing function
+    def _parsePackage(self, package:list):          #! TODO: #9 Finish package parsing function
         self._print("Parsing package: "+"["+" ,".join(package))
         command = package[0]
