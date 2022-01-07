@@ -54,7 +54,7 @@ class CrRadio:
         return CrRadioEventResult.Ok
 
 
-    def getAck(self, *args, desired = None):                                # TODO: #1 Finish getAck function @TeaCupMe  
+    def getAck(self, *args, desired:list = None):                                # TODO: #1 Finish getAck function @TeaCupMe  
         _sentTime = time.time()
         buf = []
         while time.time()-_sentTime < 1 and not self.radio.available():
@@ -64,17 +64,18 @@ class CrRadio:
         
         self.radio.read(buf, 32)
 
-        if len(desired)!=len(buf):
+        if len(desired)+1!=len(buf):
             return CrRadioEventResult.GenericError
-        elif desired and any(buf[i] != desired[i] for i in range(len(desired))):
+        elif desired and any(buf[i] != desired[i] for i in range(1, len(desired))):
             return CrRadioEventResult.GenericError
         else:
             return CrRadioEventResult.Ok
-    def _splitPieceIndex(self, index:int) -> Tuple(int, int):
+
+    def _splitPieceIndex(self, index:int) -> Tuple[int, int]:
         if index >= 65536:
             raise ValueError(f"Image piece index should not be bigger than 65535, {index} recieved")
-        high = index >> 8
-        low = index%256
+        high = (index >> 8)&0b11111111
+        low = index&0b11111111
         return (high, low)
         
     def _sendCommand(self, command:CrRadioCommand) -> CrRadioEventResult:
@@ -102,19 +103,14 @@ class CrRadio:
         # self.radio.write(list("start"))
         for index in range(len(packedData)):
             _toSend = []
-            high = bytes(index) >> 8
-            # _toSend.append(index//65536)
-            # _toSend.append((index%65536)//256)
-            # _toSend.append(index%256)
-            _toSend.extend(packedData[index])
-            self.radio.write(_toSend)
-            if self.radio.isAckPayloadAvailable():
-                pl = []
-                self.radio.read(pl, self.radio.getDynamicPayloadSize())
-                print(f"Recieved ack with {pl}")
-            else:
-                print("Recieved only ack")
-        self.radio.write(list("end"))
+            _toSend.append(CrRadioMessageType.ImagePiece.value)     #* Adding the first byte so that the
+                                                                    #*      reciever knows what the message contains
+            _splitIndex = self._splitPieceIndex(index)
+            _toSend.append(_splitIndex[0])                          #* Adding two bytes of package index 
+            _toSend.append(_splitIndex[1])
+            
+            _toSend.extend(packedData[index])                       #* Adding actual data to the package
+            self._sendPackage(_toSend)                              #* Sending package
         
         return 0
     
@@ -165,20 +161,32 @@ class CrRadio:
         
         _time = len(dt)/1000
         self._print(f"Estimated time: {_time}")
-        return _time                #!!! TODO: #7 Replace placeholder of _estimateTime() method
+        return _time                                #!!! TODO: #7 Replace placeholder of _estimateTime() method
         
-    def _sendPackage(self, package) -> CrRadioEventResult:
-        
+    def _sendPackage(self, package: list, *, hashsum:bool = False, ack:bool = True, desiredAck:bool = False) -> CrRadioEventResult:
+        self._print("Sending package... Calculated index: ", (package[0]<<8)|package[1])
         if not isinstance(package, (list)):
             self.state = CrRadioState.Error
-            raise WrongPackageType(f"Package must be of type 'list', {type(package)} recieved")
+            raise WrongPackageType(f"Package must be of type 'list', type '{type(package)}' recieved!!!")
             
-        if not len(package) == 31:
+        if len(package) > 32:
             self.state = CrRadioState.Error
-            raise WrongPackageSize(f"Package array must be of lenght 31, {len(package)} recieved")
-        # if not all(0<=)                           #! TODO #8 Add content check for buffer elements before sending
+            raise WrongPackageSize((f"Package array must be of lenght 32 at most, {len(package)} bytes recieved!!!"))
+
+        elif hashsum and not len(package) > 31:
+            self.state = CrRadioState.Error
+            raise WrongPackageSize(f"Because you specified including hashsum, package array must be of lenght 31 at most, {len(package)} bytes recieved!!!")
+        # if not all(0<=)                           #!  TODO #8 Add content check for buffer elements before sending
+                                                    
+        if hashsum:
+            package.extend([0]*(31-len(package)))
+            package.append(_getHash(package))
+        if len(package) != 32:
+            package.extend([0]*(32-len(package)))
         package.append(self._hash(package))
         self.radio.write(package)
+        if ack:
+            self.getAck(desired=package[1:] if desiredAck else None)
 
     def _print(self, message):
         if self.debug:
@@ -186,5 +194,7 @@ class CrRadio:
         return
         
     def _parsePackage(self, package:list):          #! TODO: #9 Finish package parsing function
-        self._print("Parsing package: "+"["+" ,".join(package))
+        self._print("Parsing package: "+"["+"] ,[".join(package)+"]")
         command = package[0]
+    def _getHash(self, package:list):
+        return 0                                    #! TODO #10 Add hashing function

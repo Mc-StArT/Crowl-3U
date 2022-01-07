@@ -1,14 +1,32 @@
 from RadioEnvironment import *
 
+class Test:
+    def __init__(self, a):
+        print(self.f(a))
+    def f(self, h):
+        return h*4
+        
 
-print(bool(CrRadioEventResult.TypeError))
+# a = int(input())
+# b = Test(a)
+
+print(65536&0b11111111)
+print(CrRadioEventResult.TimeoutError)
+print(bool(None))
+package = [12, 126]
+print((package[0]<<8)|package[1])
+print((12*256)+126)
 
 
-for index in range(670):
-    _toSend = []
-    high = index >> 8
-    low = index%256
-    print(high, low)
+
+# print(bool(CrRadioEventResult.TypeError))
+
+
+# for index in range(670):
+#     _toSend = []
+#     high = index >> 8
+#     low = index%256
+#     print(high, low)
 # import base64
 # def splt(n, string):
 #     print(string)
