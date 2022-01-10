@@ -10,12 +10,24 @@ class Test:
 # a = int(input())
 # b = Test(a)
 
-print(65536&0b11111111)
-print(CrRadioEventResult.TimeoutError)
-print(bool(None))
-package = [12, 126]
-print((package[0]<<8)|package[1])
-print((12*256)+126)
+# print(65536&0b11111111)
+# print(CrRadioEventResult.TimeoutError)
+# print(bool(None))
+# package = [12, 126]
+# print((package[0]<<8)|package[1])
+# print((12*256)+126)
+buf = [0]*32  
+buf[0] = CrRadioCommand.FinishImage.value
+print(buf)
+
+
+# _toSend = []
+# _toSend.append(CrRadioMessageType.ImagePiece.value)     #* Adding the first byte so that the
+                                                                    #*      reciever knows what the message contains
+# _splitIndex = self._splitPieceIndex(index)
+# _toSend.append(_splitIndex[0])                          #* Adding two bytes of package index 
+# _toSend.append(_splitIndex[1])
+# print(_toSend)
 
 
 

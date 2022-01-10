@@ -1,10 +1,13 @@
+import time
+from time import sleep
 from typing import Tuple
-import RPi.GPIO as GPIO 
-import time     
+
+import RPi.GPIO as GPIO
 import spidev
+
 from lib_nrf24 import NRF24
 from RadioEnvironment import *
-from time import sleep
+
 GPIO.setmode(GPIO.BCM)
 
 #! TODO: #4 Rewrite all(nearly all) error returns into raise errors. Assignee: @TeaCupMe 
@@ -82,11 +85,11 @@ class CrRadio:
         if not isinstance(command, CrRadioCommand):
             return CrRadioEventResult.TypeError
         buf = [0]*32                                                    # TODO: #2 Write _sendCommand function @TeaCupMe
-        buf[0] = command
+        buf[0] = command.value
         self.radio.write(buf)
         response = self.getAck()
         return response
-        pass  
+        pass
 
     def sendFile(self, filePath: str, ) -> CrRadioEventResult:          # TODO: #3 Rewrite sendFile function as open API. @TeaCupMe
         self.state = CrRadioState.ImageSending
@@ -110,9 +113,10 @@ class CrRadio:
             _toSend.append(_splitIndex[1])
             
             _toSend.extend(packedData[index])                       #* Adding actual data to the package
+            self._print(f"Prepared package: {packedData[index]}")
             self._sendPackage(_toSend)                              #* Sending package
-        
-        return 0
+        self._sendCommand(CrRadioCommand.FinishImage)
+        return CrRadioEventResult.Ok
     
     
     
@@ -141,7 +145,7 @@ class CrRadio:
                 string == "".join([str(i) for i in buff])
                 self.radio.writeAckPayload(1, [0, 1], len([0, 1]))
                 file.write("".join(buff))
-            file.close()
+            
             return 0
 
     def _hash(self, data:list):
@@ -180,13 +184,16 @@ class CrRadio:
                                                     
         if hashsum:
             package.extend([0]*(31-len(package)))
-            package.append(_getHash(package))
+            package.append(self._getHash(package))
         if len(package) != 32:
             package.extend([0]*(32-len(package)))
         package.append(self._hash(package))
         self.radio.write(package)
         if ack:
-            self.getAck(desired=package[1:] if desiredAck else None)
+            self.getAck(desired=package[1:] if desiredAck else None)  #! TODO #11 Add error message if no ack recieved
+        return CrRadioEventResult.Ok
+
+
 
     def _print(self, message):
         if self.debug:

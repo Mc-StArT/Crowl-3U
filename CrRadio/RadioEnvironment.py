@@ -24,6 +24,7 @@ class CrRadioEventResult(enum.Enum):
             return False
     def __str__(self):
         return self.name
+        
 class CrRadioMessageType(enum.Enum):
     Command = 1
     ImagePiece = 3
