@@ -11,12 +11,10 @@ from RadioEnvironment import *
 GPIO.setmode(GPIO.BCM)
 
 #! TODO: #4 Rewrite all(nearly all) error returns into raise errors. Assignee: @TeaCupMe 
-class CrRadio:
 
-    PKG_OK = 12
-    PKG_WRONG_SUM = 17
-    PKG_ERROR = 13
-    
+
+class CrRadio:
+# * @param placement:   1 - on the satellite    0 - on the ground
 
     pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]
     def __init__(self,*, placement = 1, debug = False) -> None:
@@ -36,7 +34,7 @@ class CrRadio:
         self.radio.setAutoAck(True)
         self.radio.enableDynamicPayloads()
         self.radio.enableAckPayload()
-        if placement == 1:
+        if placement == 1:      
                 
             self.radio.openWritingPipe(self.pipes[1])
             self.radio.openReadingPipe(1, self.pipes[0])
@@ -73,6 +71,14 @@ class CrRadio:
             return CrRadioEventResult.GenericError
         else:
             return CrRadioEventResult.Ok
+    def sendAck(self, *args, intended:list = None):
+        buf = []
+        buf.append(CrRadioMessageType.Ack.value)
+        if intended and isinstance(intended, list) and len(intended)<=31:
+            buf.extend(intended)
+        if len(buf) != 32:
+            buf.extend([0]*(32-len(buf)))
+        self.radio.write(buf)
 
     def _splitPieceIndex(self, index:int) -> Tuple[int, int]:
         if index >= 65536:
