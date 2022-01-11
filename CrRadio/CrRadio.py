@@ -107,7 +107,7 @@ class CrRadio:
             raise TypeError(f"Wrong file type: .b64 expected, {filePath.split('.')[-1]} got")
         with open(filePath, "r") as file:
             data = file.read()
-            self._print("data len: ", len(data), "\ndata:", ",".join(data)[:100])
+            self._print(" ".join(["data len: ", str(len(data)), "\ndata:", ",".join(data)[:100]]))
             # file.close()
         
         packedData = self._splitStringToPieces(data)[0]
