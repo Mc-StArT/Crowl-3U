@@ -42,8 +42,11 @@ class CrRadio:
             self.radio.openWritingPipe(self.pipes[0])
             self.radio.openReadingPipe(1, self.pipes[1])
         self.state = CrRadioState.Idle
-        # self.radio.printDetails()
-    
+        if self.debug:
+            print("\n\nRADIO DETAILS:")
+            self.radio.printDetails()
+            print("END OF RADIO DETAILS\n\n")
+
 
     def _readRadio(self, buff: list, *, buff_len: int = 32) -> CrRadioEventResult: 
         if not self.radio.available():
