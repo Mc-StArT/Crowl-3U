@@ -5,7 +5,7 @@ from typing import Tuple
 import RPi.GPIO as GPIO
 import spidev
 
-from lib_nrf24 import NRF24
+from .lib_nrf24 import NRF24
 from RadioEnvironment import *
 
 GPIO.setmode(GPIO.BCM)
