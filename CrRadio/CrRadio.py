@@ -113,6 +113,7 @@ class CrRadio:
         packedData = self._splitStringToPieces(data)[0]
         print(f"Bytes to be transmitted: {len(data)}\nPackages to be transmitted: {len(packedData)}\nEstimated time: {self._estimateTime(packedData)}")
         if not (bool(self._sendCommand(CrRadioCommand.StartImage))):
+            print("Generic Error occured while sending 'StartImage' command. Probably the reciever does not responded")
             return CrRadioEventResult.GenericError
         # self.radio.write(list("start"))
         for index in range(len(packedData)):
@@ -175,7 +176,7 @@ class CrRadio:
     def _estimateTime(self, dt:list) -> int:
         
         _time = len(dt)/1000
-        self._print(f"Estimated time: {_time}")
+        # self._print(f"Estimated time: {_time}")
         return _time                                #!!! TODO: #7 Replace placeholder of _estimateTime() method
         
     def _sendPackage(self, package: list, *, hashsum:bool = False, ack:bool = True, desiredAck:bool = False) -> CrRadioEventResult:
