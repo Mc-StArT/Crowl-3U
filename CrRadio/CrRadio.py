@@ -100,6 +100,7 @@ class CrRadio:
         buf = list()  
         buf.append(0)                                                  # TODO: #2 Write _sendCommand function @TeaCupMe
         buf[0] = command.value
+        self._print(values)
         if values:
             buf.extend(values)
         if len(buf)!=32:
