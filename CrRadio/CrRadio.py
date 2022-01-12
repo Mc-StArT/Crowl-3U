@@ -116,7 +116,9 @@ class CrRadio:
         if len(buf)!=32:
             buf.extend([0]*(32-len(buf)))
         self._print(buf)
+        self.radio.stopListening()
         self.radio.write(buf)
+        self.radio.startListening()
         response = self.getAck()
         self._print(f"Command sent: {buf}")
         return response
