@@ -65,8 +65,8 @@ class CrRadio:
         buf = []
         while time.time()-_sentTime < 1 and not self.radio.available():
             pass
-        self._print(self.radio.available(1))
-        if not self.radio.available(1):
+        self._print(self.radio.available())
+        if not self.radio.available():
             return CrRadioEventResult.TimeoutError
         
         self.radio.read(buf, 32)
@@ -161,7 +161,7 @@ class CrRadio:
             self._print("Listening for file...")
             while not buff[0] == CrRadioCommand.StartImage.value:
 
-                while not self.radio.available(1):
+                while not self.radio.available():
                     pass
                 self.radio.read(buff, 32)
             self.sendAck()
