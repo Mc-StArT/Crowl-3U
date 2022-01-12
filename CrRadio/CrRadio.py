@@ -124,7 +124,7 @@ class CrRadio:
         packedData = self._splitStringToPieces(data)[0]
         print(f"Bytes to be transmitted: {len(data)}\nPackages to be transmitted: {len(packedData)}\nEstimated time: {self._estimateTime(packedData)}")
 
-        if not (bool(self._sendCommand(CrRadioCommand.StartImage, values = [self._splitPieceIndex(len(packedData))]))):
+        if not (bool(self._sendCommand(CrRadioCommand.StartImage, values = self._splitPieceIndex(len(packedData))))):
             print("Generic Error occured while sending 'StartImage' command. Probably the reciever does not respond")     # SPELL
             return CrRadioEventResult.GenericError
         # self.radio.write(list("start"))
