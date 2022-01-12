@@ -1,5 +1,6 @@
 import time
 from time import sleep
+from types import resolve_bases
 from typing import Tuple
 
 import RPi.GPIO as GPIO
@@ -68,7 +69,7 @@ class CrRadio:
         
         self.radio.read(buf, 32)
 
-        if len(desired)+1!=len(buf):
+        if desired and len(desired)+1!=len(buf):
             return CrRadioEventResult.GenericError
         elif desired and any(buf[i] != desired[i] for i in range(1, len(desired))):
             return CrRadioEventResult.GenericError
@@ -126,6 +127,7 @@ class CrRadio:
         print(f"Bytes to be transmitted: {len(data)}\nPackages to be transmitted: {len(packedData)}\nEstimated time: {self._estimateTime(packedData)}")
 
         if not (bool(self._sendCommand(CrRadioCommand.StartImage, values = self._splitPieceIndex(len(packedData))))):
+            
             print("Generic Error occured while sending 'StartImage' command. Probably the reciever does not respond")     # SPELL
             return CrRadioEventResult.GenericError
         # self.radio.write(list("start"))
