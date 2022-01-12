@@ -34,7 +34,8 @@ class CrRadio:
 
         self.radio.setAutoAck(True)
         self.radio.enableDynamicPayloads()
-        self.radio.enableAckPayload()
+
+        # self.radio.enableAckPayload()
         if placement == 1:      
                 
             self.radio.openWritingPipe(self.pipes[1])
@@ -43,6 +44,9 @@ class CrRadio:
             self.radio.openWritingPipe(self.pipes[0])
             self.radio.openReadingPipe(1, self.pipes[1])
         self.state = CrRadioState.Idle
+        self.radio.startListening()
+        self.radio.stopListening()
+        self.radio.startListening()
         if self.debug:
             print("\n\nRADIO DETAILS:")
             self.radio.printDetails()
