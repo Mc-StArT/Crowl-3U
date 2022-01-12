@@ -60,6 +60,7 @@ class CrRadio:
 
 
     def getAck(self, *args, desired:list = None):                                # TODO: #1 Finish getAck function @TeaCupMe  
+        self.radio.startListening()
         _sentTime = time.time()
         buf = []
         while time.time()-_sentTime < 1 and not self.radio.available():
@@ -68,13 +69,15 @@ class CrRadio:
             return CrRadioEventResult.TimeoutError
         
         self.radio.read(buf, 32)
-        self._print(f"Ack-like message {buf} got")
+        self.radio.stopListening()
+        self._print(f"Ack-like message {buf}")
         if desired and len(desired)+1!=len(buf):
             return CrRadioEventResult.GenericError
         elif desired and any(buf[i] != desired[i] for i in range(1, len(desired))):
             return CrRadioEventResult.GenericError
         else:
             return CrRadioEventResult.Ok
+        
             
 
     def sendAck(self, *args, intended:list = None):
