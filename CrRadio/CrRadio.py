@@ -65,7 +65,8 @@ class CrRadio:
         buf = []
         while time.time()-_sentTime < 1 and not self.radio.available():
             pass
-        if not self.radio.available():
+        self._print(self.radio.available(1))
+        if not self.radio.available(1):
             return CrRadioEventResult.TimeoutError
         
         self.radio.read(buf, 32)
