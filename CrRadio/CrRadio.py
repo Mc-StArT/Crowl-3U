@@ -84,6 +84,7 @@ class CrRadio:
             buf.extend(intended)
         if len(buf) != 32:
             buf.extend([0]*(32-len(buf)))
+        self._print(f"Ack {buf} sent")
         self.radio.write(buf)
 
 
