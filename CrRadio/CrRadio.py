@@ -161,7 +161,7 @@ class CrRadio:
             self._print("Listening for file...")
             while not buff[0] == CrRadioCommand.StartImage.value:
 
-                while not self.radio.available():
+                while not self.radio.available(1):
                     pass
                 self.radio.read(buff, 32)
             self.sendAck()
