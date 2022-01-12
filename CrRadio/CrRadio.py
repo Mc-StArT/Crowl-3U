@@ -94,13 +94,18 @@ class CrRadio:
         return (high, low)
 
         
-    def _sendCommand(self, command:CrRadioCommand) -> CrRadioEventResult:
+    def _sendCommand(self, command:CrRadioCommand, *args, values:list = None) -> CrRadioEventResult:
         if not isinstance(command, CrRadioCommand):
             return CrRadioEventResult.TypeError
-        buf = [0]*32                                                    # TODO: #2 Write _sendCommand function @TeaCupMe
+        buf = [0]                                                    # TODO: #2 Write _sendCommand function @TeaCupMe
         buf[0] = command.value
+        if values:
+            buf.extend(values)
+        if len(buf)!=32:
+            buf.extend([0]*(32-len(buf)))
         self.radio.write(buf)
         response = self.getAck()
+        self._print(f"Command sent: {buf}")
         return response
         
 
@@ -116,8 +121,9 @@ class CrRadio:
         
         packedData = self._splitStringToPieces(data)[0]
         print(f"Bytes to be transmitted: {len(data)}\nPackages to be transmitted: {len(packedData)}\nEstimated time: {self._estimateTime(packedData)}")
-        if not (bool(self._sendCommand(CrRadioCommand.StartImage))):
-            print("Generic Error occured while sending 'StartImage' command. Probably the reciever does not responded")     # SPELL
+
+        if not (bool(self._sendCommand(CrRadioCommand.StartImage, values = [self._splitPieceIndex(len(packedData))]))):
+            print("Generic Error occured while sending 'StartImage' command. Probably the reciever does not respond")     # SPELL
             return CrRadioEventResult.GenericError
         # self.radio.write(list("start"))
         for index in range(len(packedData)):
@@ -140,26 +146,31 @@ class CrRadio:
             raise TypeError("Unappropriate file format: expected .b64")
         with open(fileName, "w") as file:
             self.radio.startListening()
-            buff = []
-            string = ""
+            buff = [0]
             i=1
-            while not self.radio.available():
-                self._print("Listening for file...")
-            while not string[:5]=="start":
-                while not self.radio.available([0]):
-                    time.sleep(10000/1000000.0)
+            self._print("Listening for file...")
+            while not buff[0] == CrRadioCommand.StartImage.value:
+
+                while not self.radio.available():
+                    pass
                 self.radio.read(buff, 32)
-                string == "".join([str(i) for i in buff])
-                self.radio.writeAckPayload(1, [0, 1], len([0, 1]))
-            buff=[]
-            while not string[:3]=="end":
-                buff=[]
-                while not self.radio.available([0]):
-                    time.sleep(10000/1000000.0)
-                self.radio.read(buff, 32)
-                string == "".join([str(i) for i in buff])
-                self.radio.writeAckPayload(1, [0, 1], len([0, 1]))
-                file.write("".join(buff))
+            self._print("'StartImage' command got")
+
+            # while not string[:5]=="start":
+            #     while not self.radio.available([0]):
+            #         time.sleep(10000/1000000.0)
+            #     self.radio.read(buff, 32)
+            #     string == "".join([str(i) for i in buff])
+            #     self.radio.writeAckPayload(1, [0, 1], len([0, 1]))
+            # buff=[]
+            # while not string[:3]=="end":
+            #     buff=[]
+            #     while not self.radio.available([0]):
+            #         time.sleep(10000/1000000.0)
+            #     self.radio.read(buff, 32)
+            #     string == "".join([str(i) for i in buff])
+            #     self.radio.writeAckPayload(1, [0, 1], len([0, 1]))
+            #     file.write("".join(buff))
             
             return 0
 

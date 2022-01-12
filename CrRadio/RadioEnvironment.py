@@ -1,17 +1,17 @@
 import enum
 
 class CrRadioState(enum.Enum):
-    Init = 0
-    Idle = 1
-    AwaitingForImage = 2
+    Init = 1
+    Idle = 2
+    AwaitingForImage = 3
     ImageSending = 4
     ImageRecieving = 8
     AwaitingCommand = 16
     Error = 7
 
 class CrRadioEventResult(enum.Enum):
-    Ok = 0
-    GenericError = 1
+    Ok = 1
+    GenericError = 2
     TimeoutError = 3
     NoInfoError = 13
     TypeError = 21
