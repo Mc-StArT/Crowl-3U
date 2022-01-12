@@ -70,7 +70,7 @@ class CrRadio:
             return CrRadioEventResult.TimeoutError
         
         self.radio.read(buf, 32)
-        self.radio.stopListening()
+        
         self._print(f"Ack-like message {buf}")
         if desired and len(desired)+1!=len(buf):
             return CrRadioEventResult.GenericError
