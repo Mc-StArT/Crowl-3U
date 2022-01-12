@@ -113,7 +113,7 @@ class CrRadio:
         packedData = self._splitStringToPieces(data)[0]
         print(f"Bytes to be transmitted: {len(data)}\nPackages to be transmitted: {len(packedData)}\nEstimated time: {self._estimateTime(packedData)}")
         if not (bool(self._sendCommand(CrRadioCommand.StartImage))):
-            print("Generic Error occured while sending 'StartImage' command. Probably the reciever does not responded")
+            print("Generic Error occured while sending 'StartImage' command. Probably the reciever does not responded")     # SPELL
             return CrRadioEventResult.GenericError
         # self.radio.write(list("start"))
         for index in range(len(packedData)):
@@ -207,7 +207,7 @@ class CrRadio:
 
 
 
-    def _print(self, message):
+    def _print(self, message):                      #! TODO #13 Переписать метод _print() так, чтобы он работал не на if, а в зависимости от значения self.debug либо только писал лог, либо писал лог и выводил в консоль(на базе параметра file стандартного метода print())
         if self.debug:
             print(message)
         return
