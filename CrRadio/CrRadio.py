@@ -97,7 +97,8 @@ class CrRadio:
     def _sendCommand(self, command:CrRadioCommand, *args, values:list = None) -> CrRadioEventResult:
         if not isinstance(command, CrRadioCommand):
             return CrRadioEventResult.TypeError
-        buf = [0]                                                    # TODO: #2 Write _sendCommand function @TeaCupMe
+        buf = list()  
+        list.append(0)                                                  # TODO: #2 Write _sendCommand function @TeaCupMe
         buf[0] = command.value
         if values:
             buf.extend(values)
