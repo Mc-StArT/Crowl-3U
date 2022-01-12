@@ -94,7 +94,7 @@ class CrRadio:
         return (high, low)
 
         
-    def _sendCommand(self, command:CrRadioCommand, *args, values:Tuple = Tuple()) -> CrRadioEventResult:
+    def _sendCommand(self, command:CrRadioCommand, *args, values:Tuple = tuple()) -> CrRadioEventResult:
         if not isinstance(command, CrRadioCommand):
             return CrRadioEventResult.TypeError
         buf = list()  
