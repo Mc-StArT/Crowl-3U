@@ -164,6 +164,7 @@ class CrRadio:
                 while not self.radio.available():
                     pass
                 self.radio.read(buff, 32)
+                self._print(f"Message {buff} got")
             self.sendAck()
             self._print("'StartImage' command got")
 
