@@ -32,9 +32,9 @@ class CrRadio:
         self.radio.setDataRate(NRF24.BR_1MBPS)
         self.radio.setPALevel(NRF24.PA_MIN)
 
-        self.radio.setAutoAck(True)
+        # self.radio.setAutoAck(True)
         self.radio.enableDynamicPayloads()
-        self.radio.enableAckPayload()
+        # self.radio.enableAckPayload()
         if placement == 1:      
                 
             self.radio.openWritingPipe(self.pipes[1])
