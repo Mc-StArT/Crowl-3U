@@ -74,6 +74,8 @@ class CrRadio:
             return CrRadioEventResult.GenericError
         else:
             return CrRadioEventResult.Ok
+            
+
     def sendAck(self, *args, intended:list = None):
         buf = []
         buf.append(CrRadioMessageType.Ack.value)
@@ -83,12 +85,14 @@ class CrRadio:
             buf.extend([0]*(32-len(buf)))
         self.radio.write(buf)
 
+
     def _splitPieceIndex(self, index:int) -> Tuple[int, int]:
         if index >= 65536:
             raise ValueError(f"Image piece index should not be bigger than 65535, {index} recieved")
         high = (index >> 8)&0b11111111
         low = index&0b11111111
         return (high, low)
+
         
     def _sendCommand(self, command:CrRadioCommand) -> CrRadioEventResult:
         if not isinstance(command, CrRadioCommand):
@@ -98,7 +102,7 @@ class CrRadio:
         self.radio.write(buf)
         response = self.getAck()
         return response
-        pass
+        
 
     def sendFile(self, filePath: str, ) -> CrRadioEventResult:          # TODO: #3 Rewrite sendFile function as open API. @TeaCupMe
         self.state = CrRadioState.ImageSending
@@ -129,8 +133,7 @@ class CrRadio:
             self._sendPackage(_toSend)                              #* Sending package
         self._sendCommand(CrRadioCommand.FinishImage)
         return CrRadioEventResult.Ok
-    
-    
+
     
     def recieveFile(self, fileName:str) -> int:             #! TODO #5 Rewrite recieveFile() method for open api
         if fileName.split(".")[-1]!="b64":
@@ -160,6 +163,7 @@ class CrRadio:
             
             return 0
 
+
     def _hash(self, data:list):
         toBeHashed = data.copy()
         for i in range(len(toBeHashed)):
@@ -168,16 +172,19 @@ class CrRadio:
         hsh = sum(toBeHashed)%255
         return hsh
 
+
     def _splitStringToPieces(self, string:str,*,  n=29) -> str:
         chunks = [string[i:i+n] for i in range(0, len(string), n)]
         chunks[-1] = chunks[-1]+"="*(n-len(chunks[-1]))
         return chunks, len(chunks)
+
 
     def _estimateTime(self, dt:list) -> int:
         
         _time = len(dt)/1000
         # self._print(f"Estimated time: {_time}")
         return _time                                #!!! TODO: #7 Replace placeholder of _estimateTime() method
+
         
     def _sendPackage(self, package: list, *, hashsum:bool = False, ack:bool = True, desiredAck:bool = False) -> CrRadioEventResult:
         self._print("Sending package... Calculated index: ", (package[0]<<8)|package[1])
