@@ -98,7 +98,7 @@ class CrRadio:
         if not isinstance(command, CrRadioCommand):
             return CrRadioEventResult.TypeError
         buf = list()  
-        list.append(0)                                                  # TODO: #2 Write _sendCommand function @TeaCupMe
+        buf.append(0)                                                  # TODO: #2 Write _sendCommand function @TeaCupMe
         buf[0] = command.value
         if values:
             buf.extend(values)
