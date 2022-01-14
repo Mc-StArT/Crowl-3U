@@ -1,6 +1,5 @@
 import os
 
-from matplotlib.style import available
 import spidev
 import time
 from CrRadio.lib_nrf24 import NRF24
