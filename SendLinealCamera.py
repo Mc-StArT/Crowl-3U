@@ -69,4 +69,5 @@ for index in range(len(packedData)):
     _toSend.extend(packedData[index])
     print(f"Prepared package: {packedData[index]}")
     package = preparePackage(_toSend)
-    (_toSend)  # * Sending package
+    radio.write(_toSend)  # * Sending package
+
