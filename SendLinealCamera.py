@@ -3,7 +3,7 @@ import spidev
 import time
 from CrRadio.lib_nrf24 import NRF24
 import RPi.GPIO as GPIO
-from .CrRadio.RadioEnvironment import *
+from CrRadio.RadioEnvironment import *
 
 
 GPIO.setmode(GPIO.BCM)
