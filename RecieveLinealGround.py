@@ -1,3 +1,4 @@
+
 import os
 
 import spidev
@@ -37,7 +38,7 @@ radio.stopListening()
 radio.printDetails()
 
 radio.startListening()
-while True: 
+while True:
     while not radio.available([0]):
         pass
         #time.sleep(10000/1000000.0)
@@ -45,3 +46,20 @@ while True:
     buf = []
     radio.read(buf, 32)
     print(buf)
+    if buf[0] == CrRadioCommand.StartImage:
+        break
+
+string = ""
+with open("image.b64", "ab") as file:
+    while not buf[0] == CrRadioCommand.FinishImage:
+        while not radio.available([0]):
+            pass
+            #time.sleep(10000/1000000.0)
+        # print("recieved")
+        buf = []
+        radio.read(buf, 32)
+        file.write(buf[2:])
+
+        
+        
+

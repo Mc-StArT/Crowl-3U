@@ -129,7 +129,7 @@ class CrRadio:
             raise TypeError(
                 f"Wrong file type: .b64 expected, {filePath.split('.')[-1]} got")
         with open(filePath, "r") as file:
-            data = file.read()
+            data = "".join(file.readlines())
             self._print(
                 " ".join(["data len: ", str(len(data)), "\ndata:", ",".join(data)[:100]]))
             # file.close()
@@ -241,7 +241,7 @@ class CrRadio:
             package.append(self._getHash(package))
         if len(package) != 32:
             package.extend([0]*(32-len(package)))
-        package.append(self._hash(package))
+        # package.append(self._hash(package))
         self.radio.write(package)
         if ack:
             # ! TODO #11 Add error message if no ack recieved

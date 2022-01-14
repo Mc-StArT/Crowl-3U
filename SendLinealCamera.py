@@ -38,7 +38,7 @@ if filePath.split(".")[-1] != "b64":
     raise TypeError(
         f"Wrong file type: .b64 expected, {filePath.split('.')[-1]} got")
 with open(filePath, "r") as file:
-    data = file.read()
+    data = "".join(file.readlines())
     print(
         " ".join(["data len: ", str(len(data)), "\ndata:", ",".join(data)[:100]]))
     # file.close()
@@ -65,5 +65,11 @@ for index in range(len(packedData)):
     _toSend.extend(packedData[index])
     print(f"Prepared package: {packedData[index]}")
     package = preparePackage(_toSend)
+    if len(_toSend) <32:
+        _toSend.extend(["#"]*(32-len(_toSend)))
     radio.write(_toSend)  # * Sending package
-    time.sleep(1)
+    # time.sleep(1)
+command = [CrRadioCommand.FinishImage.value, splitPieceIndex(
+    len(packedData))[0], splitPieceIndex(len(packedData))[1]]
+command.extend([0]*(32-len(command)))
+radio.write(command)
