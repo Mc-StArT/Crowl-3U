@@ -53,7 +53,7 @@ def splitStringToPieces(string: str, *,  n=29) -> str:
     return chunks, len(chunks)
 
 
-def splitPieceIndex(index: int) -> Tuple[int, int]:
+def splitPieceIndex(index: int) -> tuple[int, int]:
     if index >= 65536:
         raise ValueError(
             f"Image piece index should not be bigger than 65535, {index} recieved")
