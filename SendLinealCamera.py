@@ -33,7 +33,7 @@ radio.printDetails()
 #radio.startListening()
 
 
-filePath = os.path.abspath("./image.b64")
+filePath = os.path.abspath("./test.b64")
 if filePath.split(".")[-1] != "b64":
     raise TypeError(
         f"Wrong file type: .b64 expected, {filePath.split('.')[-1]} got")

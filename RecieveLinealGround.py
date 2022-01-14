@@ -50,7 +50,7 @@ while True:
         break
 
 string = ""
-with open("newimage.b64", "wb") as file:
+with open("newtest.b64", "wb") as file:
     while not buf[0] == CrRadioCommand.FinishImage.value:
         while not radio.available([0]):
             pass
