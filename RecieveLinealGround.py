@@ -59,6 +59,7 @@ with open("image.b64", "ab") as file:
         buf = []
         radio.read(buf, 32)
         file.write(buf[2:])
+        
 
         
         

@@ -33,7 +33,7 @@ radio.printDetails()
 #radio.startListening()
 
 
-filePath = os.path.abspath("./test.b64")
+filePath = os.path.abspath("./image.b64")
 if filePath.split(".")[-1] != "b64":
     raise TypeError(
         f"Wrong file type: .b64 expected, {filePath.split('.')[-1]} got")
@@ -63,10 +63,10 @@ for index in range(len(packedData)):
 
     # * Adding actual data to the package
     _toSend.extend(packedData[index])
-    print(f"Prepared package: {packedData[index]}")
+    # print(f"Prepared package: {packedData[index]}")
     package = preparePackage(_toSend)
     if len(_toSend) <32:
-        _toSend.extend(["#"]*(32-len(_toSend)))
+        _toSend.extend(["="]*(32-len(_toSend)))
     radio.write(_toSend)  # * Sending package
     # time.sleep(1)
 command = [CrRadioCommand.FinishImage.value, splitPieceIndex(
