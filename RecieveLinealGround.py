@@ -20,7 +20,7 @@ radio.setRetries(15, 15)
 radio.setPayloadSize(32)
 radio.setChannel(0x60)
 
-radio.setDataRate(NRF24.BR_2MBPS)
+radio.setDataRate(NRF24.BR_1MBPS)
 radio.setPALevel(NRF24.PA_MIN)
 radio.setAutoAck(True)
 radio.enableDynamicPayloads()
@@ -38,8 +38,10 @@ radio.printDetails()
 
 radio.startListening()
 while True: 
-    while not radio.available():
-        time.sleep(10000/1000000.0)
+    while not radio.available([0]):
+        pass
+        #time.sleep(10000/1000000.0)
+    print("recieved")
     buf = []
     radio.read(buf, 32)
     print(buf)
