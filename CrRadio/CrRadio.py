@@ -36,7 +36,7 @@ class CrRadio:
         self.radio.setAutoAck(True)
         self.radio.enableDynamicPayloads()
 
-        # self.radio.enableAckPayload()
+        self.radio.enableAckPayload()
         if placement == 1:
 
             self.radio.openWritingPipe(self.pipes[1])
@@ -122,7 +122,7 @@ class CrRadio:
         return response
 
     # TODO: #3 Rewrite sendFile function as open API. @TeaCupMe
-    def sendFile(self, filePath: str, ) -> CrRadioEventResult:
+    def sendFile(self, filePath: str) -> CrRadioEventResult:
         self.state = CrRadioState.ImageSending
 
         if filePath.split(".")[-1] != "b64":
