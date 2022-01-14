@@ -12,13 +12,13 @@ GPIO.setmode(GPIO.BCM)
 pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]
 
 radio = NRF24(GPIO, spidev.SpiDev())
-radio.begin(0, 17)
+radio.begin(0, 5)
 time.sleep(1)
 radio.setRetries(15, 15)
 radio.setPayloadSize(32)
 radio.setChannel(0x60)
 
-radio.setDataRate(NRF24.BR_2MBPS)
+radio.setDataRate(NRF24.BR_1MBPS)
 radio.setPALevel(NRF24.PA_MIN)
 radio.setAutoAck(True)
 radio.enableDynamicPayloads()
@@ -28,13 +28,9 @@ radio.enableAckPayload()
 radio.openWritingPipe(pipes[1])
 radio.openReadingPipe(1, pipes[0])
 
-
-radio.startListening()
-radio.stopListening()
-
 radio.printDetails()
 
-radio.startListening()
+#radio.startListening()
 
 
 filePath = os.path.abspath("./test.b64")
@@ -70,4 +66,4 @@ for index in range(len(packedData)):
     print(f"Prepared package: {packedData[index]}")
     package = preparePackage(_toSend)
     radio.write(_toSend)  # * Sending package
-
+    time.sleep(1)
