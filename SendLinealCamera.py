@@ -14,7 +14,7 @@ pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]
 radio = NRF24(GPIO, spidev.SpiDev())
 radio.begin(0, 5)
 time.sleep(1)
-radio.setRetries(15, 15)
+radio.setRetries(3, 3)
 radio.setPayloadSize(32)
 radio.setChannel(0x60)
 
@@ -33,7 +33,7 @@ radio.printDetails()
 #radio.startListening()
 
 
-filePath = os.path.abspath("./test.b64")
+filePath = os.path.abspath("./image.b64")
 if filePath.split(".")[-1] != "b64":
     raise TypeError(
         f"Wrong file type: .b64 expected, {filePath.split('.')[-1]} got")

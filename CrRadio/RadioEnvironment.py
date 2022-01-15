@@ -70,7 +70,8 @@ def estimateTime(dt: list) -> int:
 
 
 def preparePackage(package: list, *, hashsum: bool = False, ack: bool = True, desiredAck: bool = False) -> CrRadioEventResult:
-    print("Sending package... Calculated index: ",
+    if (package[1] << 8 | package[2]) % 50 == 0:
+        print("Sending package... Calculated index: ",
           (package[1] << 8) | package[2])
     if not isinstance(package, (list)):
         state = CrRadioState.Error
