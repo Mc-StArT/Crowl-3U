@@ -4,6 +4,7 @@ import time
 from CrRadio.lib_nrf24 import NRF24
 import RPi.GPIO as GPIO
 from CrRadio.RadioEnvironment import *
+import base64 as b64
 
 
 GPIO.setmode(GPIO.BCM)
@@ -31,6 +32,12 @@ radio.openReadingPipe(1, pipes[0])
 radio.printDetails()
 
 #radio.startListening()
+os.system("libcamera-jpeg -n -o ./images/image.jpg --width 640 --height 480")
+with open("./images/image.jpg", "rb") as read_image, open("./images/image.b64", "wb") as write_image:
+    write_image.write(b64.encodebytes(read_image.read()))
+
+
+
 
 
 filePath = os.path.abspath("./image.b64")
@@ -73,3 +80,4 @@ command = [CrRadioCommand.FinishImage.value, splitPieceIndex(
     len(packedData))[0], splitPieceIndex(len(packedData))[1]]
 command.extend([0]*(32-len(command)))
 radio.write(command)
+print("finished")

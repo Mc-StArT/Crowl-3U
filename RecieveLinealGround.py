@@ -1,6 +1,6 @@
 
 import os
-
+import base64 as b64
 import spidev
 import time
 from CrRadio.lib_nrf24 import NRF24
@@ -50,7 +50,7 @@ while True:
         break
 
 string = ""
-with open("newimage.b64", "wb") as file:
+with open("./images/newimage.b64", "wb") as file:
     while not buf[0] == CrRadioCommand.FinishImage.value:
         while not radio.available([0]):
             pass
@@ -66,6 +66,8 @@ with open("newimage.b64", "wb") as file:
         #file.write(buf[3:])
 
 print("finished")
+with open("./images/newimage.b64", "rb") as read_image, open("./images/newimage.jpg", "wb") as write_image:
+    write_image.write(b64.decodebytes(read_image.read()))
 
         
         
