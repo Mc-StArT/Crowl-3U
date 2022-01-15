@@ -14,5 +14,4 @@ def decodeImage(path:str = "./images/newimage.b64"):
     with open("./images/newimage.jpg", "wb") as image:
         image.write(b64.decodebytes(image_read))
 
-decodeImage("./images/imagetest.b64")
-encodeImage("./images/image.jpg")
+decodeImage("./images/newimage.b64")
