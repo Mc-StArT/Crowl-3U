@@ -6,8 +6,8 @@ import base64 as b64
 #     image.write(b64.encodebytes(image_read))
 
 
-with open("newimage.b64", "rb") as image:
+with open("newtest.b64", "rb") as image:
     image_read = image.read()
 
-with open("newimage.jpg", "wb") as image:
+with open("newtest.jpg", "wb") as image:
     image.write(b64.decodebytes(image_read))
