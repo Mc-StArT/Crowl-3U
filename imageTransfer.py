@@ -3,7 +3,7 @@ def encodeImage(path:str="./images/image.jpg"):
     with open(path, "rb") as image:
         image_read = image.read()
 
-    with open("./images/image.b64", "wb") as image:
+    with open("./images/imagetest.b64", "wb") as image:
         image.write(b64.encodebytes(image_read))
 
 def decodeImage(path:str = "./images/newimage.b64"):
@@ -11,5 +11,8 @@ def decodeImage(path:str = "./images/newimage.b64"):
     with open("./images/newimage.b64", "rb") as image:
         image_read = image.read()
 
-    with open("./images/newtest.jpg", "wb") as image:
+    with open("./images/newimage.jpg", "wb") as image:
         image.write(b64.decodebytes(image_read))
+
+decodeImage("./images/imagetest.b64")
+encodeImage("./images/image.jpg")
