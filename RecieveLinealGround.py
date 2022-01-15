@@ -50,12 +50,13 @@ while True:
         break
 
 string = ""
-with open("newtest.b64", "wb") as file:
+with open("newimage.b64", "wb") as file:
     while not buf[0] == CrRadioCommand.FinishImage.value:
         while not radio.available([0]):
             pass
             #time.sleep(10000/1000000.0)
-        print("recieved", (buf[1])<<8 | buf[2])
+        if (buf[1]<<8|buf[2])%50 == 0:
+            print("recieved", (buf[1])<<8 | buf[2], "packages")
         buf = []
         radio.read(buf, 32)
         if not buf[0] == CrRadioCommand.FinishImage.value:
