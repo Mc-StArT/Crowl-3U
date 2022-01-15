@@ -38,6 +38,7 @@ radio.stopListening()
 radio.printDetails()
 
 radio.startListening()
+
 while True:
     while not radio.available([0]):
         pass
@@ -50,12 +51,13 @@ while True:
         break
 
 string = ""
+c = 0
 with open("./images/newimage.b64", "wb") as file:
     while not buf[0] == CrRadioCommand.FinishImage.value:
         while not radio.available([0]):
             pass
             #time.sleep(10000/1000000.0)
-        if (buf[1]<<8|buf[2])%50 == 0:
+        if (buf[1]<<8|buf[2])%1 == 0:
             print("recieved", (buf[1])<<8 | buf[2], "packages")
         buf = []
         radio.read(buf, 32)
@@ -64,8 +66,8 @@ with open("./images/newimage.b64", "wb") as file:
                 if i!="=":
                     file.write(i.to_bytes(1, byteorder = 'big'))
         #file.write(buf[3:])
-
-print("finished")
+        c+=1
+print(f"finished, recieved {c} packages")
 with open("./images/newimage.b64", "rb") as read_image, open("./images/newimage.jpg", "wb") as write_image:
     write_image.write(b64.decodebytes(read_image.read()))
 
