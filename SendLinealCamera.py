@@ -20,7 +20,7 @@ radio.setPayloadSize(32)
 radio.setChannel(0x60)
 
 radio.setDataRate(NRF24.BR_1MBPS)
-radio.setPALevel(NRF24.PA_MIN)
+radio.setPALevel(NRF24.PA_MAX)
 radio.setAutoAck(True)
 radio.enableDynamicPayloads()
 radio.enableAckPayload()
@@ -32,7 +32,7 @@ radio.openReadingPipe(1, pipes[0])
 radio.printDetails()
 
 #radio.startListening()
-os.system("libcamera-jpeg -n -o ./images/image.jpg --width 150 --height 150")
+os.system("libcamera-jpeg -n -o ./images/image.jpg --width 1920 --height 1080")
 with open("./images/image.jpg", "rb") as read_image, open("./images/image.b64", "wb") as write_image:
     write_image.write(b64.encodebytes(read_image.read()))
 
