@@ -38,7 +38,9 @@ radio.stopListening()
 radio.printDetails()
 
 radio.startListening()
-
+command = [CrRadioCommand.StartImage.value]
+command.extend([0]*(32-len(command)))
+radio.write(command)
 while True:
     while not radio.available([0]):
         pass

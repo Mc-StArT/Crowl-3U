@@ -32,6 +32,21 @@ radio.openReadingPipe(1, pipes[0])
 radio.printDetails()
 
 #radio.startListening()
+
+while True:
+    while not radio.available([0]):
+        pass
+        #time.sleep(10000/1000000.0)
+    print("recieved")
+    buf = []
+    radio.read(buf, 32)
+    print(buf)
+    if buf[0] == CrRadioCommand.StartImage.value:
+        break
+
+
+
+
 os.system("libcamera-jpeg -n -o ./images/image.jpg --width 1920 --height 1080")
 with open("./images/image.jpg", "rb") as read_image, open("./images/image.b64", "wb") as write_image:
     write_image.write(b64.encodebytes(read_image.read()))
