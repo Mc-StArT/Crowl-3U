@@ -22,7 +22,7 @@ radio.setPayloadSize(32)
 radio.setChannel(0x60)
 
 radio.setDataRate(NRF24.BR_1MBPS)
-radio.setPALevel(NRF24.PA_MIN)
+radio.setPALevel(NRF24.PA_MAX)
 radio.setAutoAck(True)
 radio.enableDynamicPayloads()
 radio.enableAckPayload()
@@ -69,7 +69,7 @@ with open("./images/newimage.b64", "wb") as file:
         c+=1
 print(f"finished, recieved {c} packages")
 with open("./images/newimage.b64", "rb") as read_image, open("./images/newimage.jpg", "wb") as write_image:
-    write_image.write(b64.decodebytes("".join(read_image.readlines())))
+    write_image.write(b64.decodebytes(read_image.read()))
 
         
         
