@@ -32,25 +32,23 @@ radio.openWritingPipe(pipes[0])
 radio.openReadingPipe(1, pipes[1])
 radio.printDetails()
 
-# radio.startListening()
-# radio.stopListening()
+#radio.startListening()
+#radio.stopListening()
 
-radio.printDetails()
-
-radio.startListening()
+#radio.startListening()
 command = [CrRadioCommand.StartImage.value]
-command.extend([0]*(32-len(command)))
+#command.extend([0]*(32-len(command)))
 radio.write(command)
 while True:
     radio.write(command)
     print("image requested")
-    while not radio.available():
+    if not radio.available():
         # pass
         time.sleep(10000/1000000.0)
     
     buf = []
     radio.read(buf, 32)
-    print(str(buf)+"\n" if len(buf)>0 else "", end = "")
+    print(str(buf)+"\n" if len(buf)>0 else "-", end = "")
     if buf[0] == CrRadioCommand.StartImage.value:
         print("recieved")
         break
