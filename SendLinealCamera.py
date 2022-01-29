@@ -34,7 +34,7 @@ radio.printDetails()
 #radio.startListening()
 
 while True:
-    while not radio.available([0]):
+    while not radio.available():
         pass
         #time.sleep(10000/1000000.0)
     print("recieved")

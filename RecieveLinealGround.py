@@ -32,8 +32,8 @@ radio.openWritingPipe(pipes[0])
 radio.openReadingPipe(1, pipes[1])
 radio.printDetails()
 
-radio.startListening()
-radio.stopListening()
+# radio.startListening()
+# radio.stopListening()
 
 radio.printDetails()
 
@@ -42,7 +42,7 @@ command = [CrRadioCommand.StartImage.value]
 command.extend([0]*(32-len(command)))
 radio.write(command)
 while True:
-    while not radio.available([0]):
+    while not radio.available():
         pass
         #time.sleep(10000/1000000.0)
     print("recieved")
