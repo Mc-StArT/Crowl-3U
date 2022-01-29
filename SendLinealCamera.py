@@ -31,12 +31,16 @@ radio.openReadingPipe(1, pipes[0])
 
 radio.printDetails()
 
-radio.startListening()
+#radio.startListening()
+#radio.stopListening()
+
+
+#radio.startListening()
 
 while True:
-    while not radio.available():
-        pass
-        #time.sleep(10000/1000000.0)
+    if not radio.available([1]):
+        #pass
+        time.sleep(500000/1000000.0)
     print("recieved")
     buf = []
     radio.read(buf, 32)
