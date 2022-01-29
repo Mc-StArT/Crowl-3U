@@ -31,7 +31,7 @@ radio.openReadingPipe(1, pipes[0])
 
 radio.printDetails()
 
-#radio.startListening()
+radio.startListening()
 
 while True:
     while not radio.available():
